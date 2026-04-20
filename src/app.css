@@ -1,0 +1,51 @@
+.mainContainer{
+    display: grid;
+    grid-template-columns: 2fr 8fr;
+    grid-template-rows: 1fr auto;
+    grid-template-areas: "nav nav"
+    "ham main";
+}
+
+.mainContainer .ham{
+    grid-area: ham;
+}
+
+.mainContainer .homeMainFeed{
+    grid-area: main;
+}
+
+.mainContainer .navSearch{
+    grid-area: nav;
+}
+
+.itemsList {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 25% 25% 25% 25%;
+    gap: 10px;
+}
+.item{
+    list-style: none;
+    
+}
+.homeMainFeed{
+    background-color: lightgreen;
+}
+
+.ham{
+    height: 100vh;
+    width: 100%;
+    background-color: grey;
+}
+.ham img {
+    height: 5vh;
+    width: auto;
+}
+
+.navSearch{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1% 5%;
+    background-color: lightblue;
+}
