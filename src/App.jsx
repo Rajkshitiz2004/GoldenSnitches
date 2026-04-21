@@ -1,14 +1,13 @@
 import React from "react";
-import Mainfeed from "./components/homeBar/Mainfeed.jsx";
-import Hamburger from "./components/hamburger/ham.jsx";
-import "./app.css";
-import Navsearch from "./components/searchBar/navSearch.jsx";
+import Mainfeed from "./pages/Home.jsx";
+import Layout from "./components/layout/layout.jsx";
+
+import "./Index.css";
 
 export default function App() {
     return (
         <div className="mainContainer">
-            <Navsearch />
-            <Hamburger />
+            <Layout />
             <Mainfeed />
         </div>
     )
