@@ -7,7 +7,16 @@ export default function VideoPlayer() {
     const navigate = useNavigate();
     const [videos, setVideos] = useState([]);
     const [selectedVideo, setSelectedVideo] = useState(null);
+    const [channelStats, setChannelStats] = useState(null);
     const [error, setError] = useState(null);
+
+    const formatCount = (count) => {
+        if (!count) return "0";
+        const num = parseInt(count);
+        if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+        if (num >= 1000) return (num / 1000).toFixed(1) + "K";
+        return num.toString();
+    };
 
     useEffect(() => {
         if (!videoId) return;
@@ -21,15 +30,25 @@ export default function VideoPlayer() {
                     return;
                 }
                 if (data.items && data.items.length > 0) {
-                    setSelectedVideo(data.items[0]);
+                    const video = data.items[0];
+                    setSelectedVideo(video);
+                    
+                    // Fetch channel statistics (subscribers)
+                    fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${video.snippet.channelId}&key=${API_KEY}`)
+                        .then(res => res.json())
+                        .then(channelData => {
+                            if (channelData.items && channelData.items.length > 0) {
+                                setChannelStats(channelData.items[0].statistics);
+                            }
+                        })
+                        .catch(err => console.error("Channel fetch error:", err));
                 } else {
                     setError("Video not found.");
                 }
             })
             .catch(err => setError(err.message));
 
-        // Fetch related/recommended videos (using search with relatedToVideoId is deprecated, 
-        // so we'll search based on the current video's category or just general react videos for now)
+        // Fetch related/recommended videos
         fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&key=${API_KEY}&q=react`)
             .then(res => res.json())
             .then(data => {
@@ -78,7 +97,7 @@ export default function VideoPlayer() {
                             </div>
                             <div>
                                 <h4 className="font-semibold">{selectedVideo.snippet.channelTitle}</h4>
-                                <p className="text-sm text-gray-500">1.2M Subscribers</p>
+                                <p className="text-sm text-gray-500">{formatCount(channelStats?.subscriberCount)} Subscribers</p>
                             </div>
                             <button className="bg-black text-white px-4 py-2 rounded-full font-medium ml-4 hover:bg-gray-800 transition">
                                 Subscribe
@@ -88,7 +107,7 @@ export default function VideoPlayer() {
                         <div className="flex items-center gap-2">
                             <div className="flex bg-gray-100 rounded-full overflow-hidden">
                                 <button className="px-4 py-2 hover:bg-gray-200 border-r border-gray-200 flex items-center gap-1">
-                                    👍 <span className="text-sm">{(parseInt(selectedVideo.statistics?.likeCount || 0) / 1000).toFixed(1)}K</span>
+                                    👍 <span className="text-sm">{formatCount(selectedVideo.statistics?.likeCount)}</span>
                                 </button>
                                 <button className="px-4 py-2 hover:bg-gray-200">
                                     👎
@@ -105,7 +124,7 @@ export default function VideoPlayer() {
 
                     <div className="mt-4 bg-gray-50 p-4 rounded-xl">
                         <div className="flex gap-2 text-sm font-semibold mb-1">
-                            <span>{(parseInt(selectedVideo.statistics?.viewCount || 0) / 1000000).toFixed(1)}M views</span>
+                            <span>{formatCount(selectedVideo.statistics?.viewCount)} views</span>
                             <span>•</span>
                             <span>{new Date(selectedVideo.snippet.publishedAt).toLocaleDateString()}</span>
                         </div>
