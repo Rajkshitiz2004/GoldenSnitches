@@ -1,32 +1,15 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
+import Mainfeed from "../components/homeVideo.jsx";
+import Layout from "../layout/Layout.jsx";
+import "../Index.css";
 
-const API_KEY = import.meta.env.VITE_YOUR_API_KEY;
-
-export default function Mainfeed() {
-    const [mainFeedData, setMainFeedData] = useState(null);
-
-    useEffect(() => {
-        fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&regionCode=IN&maxResults=10&key=${API_KEY}`)
-            .then(res => res.json())
-            .then(data => setMainFeedData(data));
-    }, []);
-
+export default function Home() {
+    const [search, setSearch] = useState("");
+    
     return (
-        <div className="homeMainFeed">
-            <ul className="cards">
-                {mainFeedData && mainFeedData.items.map((item) => (
-                    <div className="card">
-                        <li className="item" key={item.id}>
-                            <img
-                                src={item.snippet.thumbnails.default.url}
-                                alt={item.snippet.title}
-                            />
-                            <p>{item.snippet.title}</p>
-                    </li>
-                    </div>
-                ))}
-            </ul>
+        <div className="grid grid-cols-[2fr_8fr] grid-rows-[1fr_auto] [grid-template-areas:'nav_nav'_'ham_main'] w-full min-h-screen">
+            <Layout setSearch={setSearch} search={search} />
+            <Mainfeed/>
         </div>
     )
 }

@@ -1,14 +1,19 @@
 import React from "react";
-import Mainfeed from "./pages/Home.jsx";
-import Layout from "./components/layout/layout.jsx";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home.jsx";
+import Searchscreen from "./pages/Searchscreen.jsx";
 
 import "./Index.css";
 
 export default function App() {
     return (
-        <div className="mainContainer">
-            <Layout />
-            <Mainfeed />
+        <div>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/search" element={<Searchscreen />} />
+                </Routes>
+            </BrowserRouter>
         </div>
     )
 }

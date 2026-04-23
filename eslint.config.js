@@ -2,12 +2,16 @@ import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
+import tailwindcss from '@tailwindcss/vite'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
   globalIgnores(['dist']),
   {
     files: ['**/*.{js,jsx}'],
+    plugins: [
+      tailwindcss(),
+    ],
     extends: [
       js.configs.recommended,
       reactHooks.configs.flat.recommended,
