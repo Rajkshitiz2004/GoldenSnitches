@@ -1,11 +1,13 @@
 import React from "react";
 import "../Index.css";
+import { useNavigate } from "react-router-dom";
 
 import { useState, useEffect } from "react";
 
 const API_KEY = import.meta.env.VITE_YOUR_API_KEY;
 
 export default function Mainfeed() {
+    const navigate = useNavigate();
     const [mainFeedData, setMainFeedData] = useState(null);
 
     useEffect(() => {
@@ -24,7 +26,11 @@ export default function Mainfeed() {
         <div className="border-t-2 border-gray-300 [grid-area:main]">
             <ul className="p-[10px] grid grid-rows-[auto] grid-cols-[25%_24%_24%_24%] gap-[10px]">
                 {mainFeedData?.items?.map((item) => (
-                    <div key={item.id} className="border-2 border-gray-300 rounded-lg text-center ">
+                    <div 
+                        key={item.id} 
+                        onClick={() => navigate(`/watch_v/${item.id}`)}
+                        className="border-2 border-gray-300 rounded-lg text-center cursor-pointer hover:bg-gray-50 transition"
+                    >
                         <li className="list-none">
                             <img
                                 className="w-full h-auto rounded-lg"

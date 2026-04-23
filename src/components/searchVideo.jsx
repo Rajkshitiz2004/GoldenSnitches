@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
 import "../Index.css";
 
 const API_KEY = import.meta.env.VITE_YOUR_API_KEY;
 
 export default function Search({ Input_value }) {
+    const navigate = useNavigate();
     const [searchResults, setSearchResults] = useState(null);
     console.log("Input_value", Input_value)
 
@@ -26,7 +28,11 @@ export default function Search({ Input_value }) {
 
     function SearchCard({ data }) {
         return (
-            <div key={data.id.videoId} className="flex gap-[5%] mb-4 p-2 border-b border-gray-200">
+            <div 
+                key={data.id.videoId} 
+                onClick={() => navigate(`/watch_v/${data.id.videoId}`)}
+                className="flex gap-[5%] mb-4 p-2 border-b border-gray-200 cursor-pointer hover:bg-gray-50 transition"
+            >
                 <img className="w-[25%] h-auto rounded" src={data.snippet.thumbnails.medium.url} alt={data.snippet.title} />
                 <div className="w-[75%] flex flex-col gap-[1%]">
                     <div><h3><b>{data.snippet.title}</b></h3></div>
