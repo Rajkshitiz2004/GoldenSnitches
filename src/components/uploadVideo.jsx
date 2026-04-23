@@ -1,11 +1,22 @@
+import { useNavigate } from "react-router-dom";
+
 export default function Upload({ onClose }) {
+    const navigate = useNavigate();
+
+    const handleClose = () => {
+        if (onClose) {
+            onClose();
+        } else {
+            navigate("/");
+        }
+    };
     return (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm p-4">
             <div id="Upload_video_class" className="bg-[#121212] text-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden border border-gray-800 flex flex-col">
                 {/* Header */}
                 <div className="flex justify-between items-center px-8 py-5 border-b border-gray-800">
                     <h2 className="text-xl font-bold">Upload Video</h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-white transition">
+                    <button onClick={handleClose} className="text-gray-400 hover:text-white transition">
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -56,7 +67,7 @@ export default function Upload({ onClose }) {
                         By submitting, you agree to our Terms of Service
                     </p>
                     <div className="flex items-center gap-4">
-                        <button onClick={onClose} className="text-xs font-bold text-gray-500 hover:text-gray-300 transition-colors uppercase tracking-widest">
+                        <button onClick={handleClose} className="text-xs font-bold text-gray-500 hover:text-gray-300 transition-colors uppercase tracking-widest">
                             Cancel
                         </button>
                         <button className="bg-[#222222] text-gray-600 px-10 py-2 rounded-full font-bold text-xs uppercase tracking-widest cursor-not-allowed">
