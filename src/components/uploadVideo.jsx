@@ -60,17 +60,9 @@ export default function Upload({ onClose }) {
                     </div>
                 </div>
 
-                {/* Footer */}
                 <div className="px-8 py-5 border-t border-gray-800 bg-[#0d0d0d] flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <p className="text-[10px] text-gray-600 flex items-center gap-2">
-                        <span className="w-4 h-4 rounded-full border border-gray-800 flex items-center justify-center text-[8px] font-bold italic">i</span>
-                        By submitting, you agree to our Terms of Service
-                    </p>
                     <div className="flex items-center gap-4 ml-auto">
-                        <button onClick={handleClose} className="text-xs font-bold text-gray-500 hover:text-gray-300 transition-colors uppercase tracking-widest">
-                            Cancel
-                        </button>
-                        <button className="bg-[#222222] text-gray-600 px-10 py-2 rounded-full font-bold text-xs uppercase tracking-widest cursor-not-allowed">
+                        <button className="bg-[#222222] text-gray-600 px-10 py-2 rounded-full font-bold text-xs uppercase tracking-widest">
                             Next
                         </button>
                     </div>
