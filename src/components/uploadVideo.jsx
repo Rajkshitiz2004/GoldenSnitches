@@ -13,7 +13,7 @@ export default function Upload({ onClose }) {
     return (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm p-4">
             <div id="Upload_video_class" className="bg-[#121212] text-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden border border-gray-800 flex flex-col">
-                {/* Header */}
+    
                 <div className="flex justify-between items-center px-8 py-5 border-b border-gray-800">
                     <h2 className="text-xl font-bold">Upload Video</h2>
                     <button onClick={handleClose} className="text-gray-400 hover:text-white transition">
@@ -24,7 +24,7 @@ export default function Upload({ onClose }) {
                 </div>
 
                 <div className="flex flex-col lg:flex-row p-8 gap-8 overflow-y-auto max-h-[70vh]">
-                    {/* Left side: Upload Area */}
+                    
                     <div className="lg:w-1/2 border-2 border-dashed border-gray-800 rounded-xl p-8 flex flex-col items-center justify-center text-center bg-[#181818] group hover:border-gray-600 transition-colors">
                         <div className="w-16 h-16 bg-[#222222] rounded-full flex items-center justify-center mb-6 group-hover:bg-[#2a2a2a] transition-colors">
                             <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,7 +38,7 @@ export default function Upload({ onClose }) {
                         </button>
                     </div>
 
-                    {/* Right side: Form */}
+                    
                     <div className="lg:w-1/2 flex flex-col gap-6">
                         <div className="flex flex-col gap-2">
                             <label className="text-[10px] font-bold text-gray-500 tracking-widest uppercase">Title (required)</label>
@@ -63,10 +63,10 @@ export default function Upload({ onClose }) {
                 {/* Footer */}
                 <div className="px-8 py-5 border-t border-gray-800 bg-[#0d0d0d] flex flex-col sm:flex-row justify-between items-center gap-4">
                     <p className="text-[10px] text-gray-600 flex items-center gap-2">
-                        <span className="w-4 h-4 rounded-full border border-gray-800 flex items-center justify-center text-[8px] font-bold">!</span>
+                        <span className="w-4 h-4 rounded-full border border-gray-800 flex items-center justify-center text-[8px] font-bold italic">i</span>
                         By submitting, you agree to our Terms of Service
                     </p>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 ml-auto">
                         <button onClick={handleClose} className="text-xs font-bold text-gray-500 hover:text-gray-300 transition-colors uppercase tracking-widest">
                             Cancel
                         </button>
