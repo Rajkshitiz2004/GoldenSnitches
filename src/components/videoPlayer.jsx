@@ -18,10 +18,14 @@ export default function VideoPlayer() {
         return num.toString();
     };
 
+    const handleChannelClick = (e, channelId) => {
+        if (e) e.stopPropagation();
+        navigate(`/creator/${channelId}`);
+    };
+
     useEffect(() => {
         if (!videoId) return;
 
-        // Fetch current video details
         fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoId}&key=${API_KEY}`)
             .then(res => res.json())
             .then(data => {
@@ -32,8 +36,7 @@ export default function VideoPlayer() {
                 if (data.items && data.items.length > 0) {
                     const video = data.items[0];
                     setSelectedVideo(video);
-                    
-                    // Fetch channel statistics (subscribers)
+
                     fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${video.snippet.channelId}&key=${API_KEY}`)
                         .then(res => res.json())
                         .then(channelData => {
@@ -48,8 +51,7 @@ export default function VideoPlayer() {
             })
             .catch(err => setError(err.message));
 
-        // Fetch related/recommended videos
-        fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&key=${API_KEY}&q=react`)
+        fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=15&key=${API_KEY}&q=trending`)
             .then(res => res.json())
             .then(data => {
                 if (data.items) {
@@ -59,107 +61,115 @@ export default function VideoPlayer() {
             .catch(err => console.error("Recommendations fetch error:", err));
     }, [videoId]);
 
-    function IframePlayer({ videoId }) {
-        return (
-            <iframe
-                width="100%"
-                height="450"
-                src={`https://www.youtube.com/embed/${videoId}`}
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="rounded-xl"
-            ></iframe>
-        );
-    }
-
-    if (error) {
-        return <div className="p-6 text-center text-red-500">Error: {error}</div>;
-    }
-
-    if (!selectedVideo) {
-        return <div className="p-6 text-center">Loading...</div>;
-    }
+    if (error) return <div className="p-6 text-center text-red-500 bg-[#0f0f0f] min-h-screen">Error: {error}</div>;
+    if (!selectedVideo) return <div className="p-6 text-center text-white bg-[#0f0f0f] min-h-screen">Loading...</div>;
 
     return (
-        <div className="flex flex-col lg:flex-row gap-6 p-6 bg-gray-50 min-h-screen">
-            <div className="lg:w-2/3 flex flex-col gap-4">
-                <IframePlayer videoId={videoId} />
-                
-                <div className="bg-white p-4 rounded-xl shadow-sm">
-                    <h2 className="text-2xl font-bold mb-2">{selectedVideo.snippet.title}</h2>
-                    
-                    <div className="flex flex-wrap items-center justify-between gap-4 py-2 border-b border-gray-100">
+        <div className="bg-[#0f0f0f] min-h-screen text-white font-sans">
+            <div className="max-w-[1700px] mx-auto flex flex-col lg:flex-row gap-6 p-4">
+
+                <div className="flex-grow lg:max-w-[calc(100%-420px)]">
+                    <div className="relative aspect-video rounded-xl overflow-hidden bg-black shadow-2xl mb-4">
+                        <iframe
+                            width="100%"
+                            height="100%"
+                            src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                            title="YouTube video player"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="absolute inset-0"
+                        ></iframe>
+                    </div>
+
+                    <h1 className="text-xl md:text-2xl font-bold mb-3 line-clamp-2 leading-tight">
+                        {selectedVideo.snippet.title}
+                    </h1>
+
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                         <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center font-bold text-gray-600">
-                                {selectedVideo.snippet.channelTitle ? selectedVideo.snippet.channelTitle[0] : "?"}
+                            <div
+                                onClick={(e) => handleChannelClick(e, selectedVideo.snippet.channelId)}
+                                className="w-10 h-10 rounded-full bg-[#333] flex items-center justify-center font-bold text-gray-400 cursor-pointer overflow-hidden hover:opacity-80 transition"
+                            >
+                                {selectedVideo.snippet.channelTitle[0]}
                             </div>
-                            <div>
-                                <h4 className="font-semibold">{selectedVideo.snippet.channelTitle}</h4>
-                                <p className="text-sm text-gray-500">{formatCount(channelStats?.subscriberCount)} Subscribers</p>
+                            <div className="flex flex-col">
+                                <h4
+                                    onClick={(e) => handleChannelClick(e, selectedVideo.snippet.channelId)}
+                                    className="font-bold text-base cursor-pointer hover:text-gray-300 transition"
+                                >
+                                    {selectedVideo.snippet.channelTitle}
+                                </h4>
+                                <p className="text-[12px] text-[#aaa] font-medium">{formatCount(channelStats?.subscriberCount)} subscribers</p>
                             </div>
-                            <button className="bg-black text-white px-4 py-2 rounded-full font-medium ml-4 hover:bg-gray-800 transition">
+                            <button className="bg-white text-black px-4 py-2 rounded-full font-bold text-sm ml-3 hover:bg-gray-200 transition">
                                 Subscribe
                             </button>
                         </div>
-                        
-                        <div className="flex items-center gap-2">
-                            <div className="flex bg-gray-100 rounded-full overflow-hidden">
-                                <button className="px-4 py-2 hover:bg-gray-200 border-r border-gray-200 flex items-center gap-1">
-                                    👍 <span className="text-sm">{formatCount(selectedVideo.statistics?.likeCount)}</span>
+
+                        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
+                            <div className="flex items-center bg-[#272727] rounded-full overflow-hidden flex-shrink-0">
+                                <button className="px-4 py-2 hover:bg-[#3f3f3f] border-r border-white/10 flex items-center gap-2 font-bold text-sm transition">
+                                    <span className="text-lg">👍</span>
+                                    <span>{formatCount(selectedVideo.statistics?.likeCount)}</span>
                                 </button>
-                                <button className="px-4 py-2 hover:bg-gray-200">
-                                    👎
+                                <button className="px-4 py-2 hover:bg-[#3f3f3f] flex items-center transition">
+                                    <span className="text-lg rotate-180">👍</span>
                                 </button>
                             </div>
-                            <button className="bg-gray-100 px-4 py-2 rounded-full hover:bg-gray-200 font-medium">
-                                Share
+                            <button className="bg-[#272727] px-4 py-2 rounded-full hover:bg-[#3f3f3f] font-bold text-sm flex items-center gap-2 flex-shrink-0 transition">
+                                <span>↪️</span> Share
                             </button>
-                            <button className="bg-gray-100 w-10 h-10 rounded-full hover:bg-gray-200 flex items-center justify-center font-bold">
+                            <button className="bg-[#272727] px-4 py-2 rounded-full hover:bg-[#3f3f3f] font-bold text-sm flex items-center gap-2 flex-shrink-0 transition">
+                                <span>📥</span> Save
+                            </button>
+                            <button className="bg-[#272727] w-10 h-10 rounded-full hover:bg-[#3f3f3f] flex items-center justify-center font-bold text-lg flex-shrink-0 transition">
                                 ...
                             </button>
                         </div>
                     </div>
 
-                    <div className="mt-4 bg-gray-50 p-4 rounded-xl">
-                        <div className="flex gap-2 text-sm font-semibold mb-1">
-                            <span>{formatCount(selectedVideo.statistics?.viewCount)} views</span>
+                    <div className="bg-[#272727] p-3 rounded-xl hover:bg-[#333] transition-colors cursor-pointer group">
+                        <div className="flex gap-2 text-sm font-bold mb-1">
+                            <span>{parseInt(selectedVideo.statistics?.viewCount).toLocaleString()} views</span>
                             <span>•</span>
                             <span>{new Date(selectedVideo.snippet.publishedAt).toLocaleDateString()}</span>
                         </div>
-                        <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                        <p className="text-sm text-gray-100 whitespace-pre-wrap line-clamp-3 group-hover:line-clamp-none leading-relaxed">
                             {selectedVideo.snippet.description}
                         </p>
                     </div>
                 </div>
-            </div>
 
-            <div className="lg:w-1/3 flex flex-col gap-4">
-                <h3 className="font-bold text-lg px-2">Recommended</h3>
-                <div className="flex flex-col gap-3">
+                <div className="lg:w-[400px] flex-shrink-0 flex flex-col gap-3">
                     {videos.map((item) => (
-                        <div 
-                            key={item.id.videoId} 
+                        <div
+                            key={item.id.videoId}
                             onClick={() => navigate(`/watch_v/${item.id.videoId}`)}
-                            className="flex gap-3 cursor-pointer group hover:bg-gray-100 p-2 rounded-lg transition"
+                            className="flex gap-2 cursor-pointer group"
                         >
-                            <div className="relative w-40 flex-shrink-0">
-                                <img 
-                                    className="w-full h-24 object-cover rounded-lg" 
-                                    src={item.snippet.thumbnails.medium.url} 
-                                    alt={item.snippet.title} 
+                            <div className="relative w-40 flex-shrink-0 aspect-video rounded-lg overflow-hidden bg-[#121212]">
+                                <img
+                                    className="w-full h-full object-cover transition duration-300 group-hover:scale-105"
+                                    src={item.snippet.thumbnails.medium.url}
+                                    alt={item.snippet.title}
                                 />
+                                <div className="absolute bottom-1 right-1 bg-black/80 px-1 py-0.5 rounded text-[10px] font-bold text-white">
+                                    10:00
+                                </div>
                             </div>
-                            <div className="flex flex-col gap-1 overflow-hidden">
-                                <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-blue-600 transition">
+                            <div className="flex flex-col gap-0.5 overflow-hidden pr-2">
+                                <h3 className="font-bold text-sm line-clamp-2 leading-snug group-hover:text-blue-400 transition-colors">
                                     {item.snippet.title}
                                 </h3>
-                                <p className="text-xs text-gray-600">{item.snippet.channelTitle}</p>
-                                <div className="flex gap-1 text-[10px] text-gray-500">
-                                    <span>{new Date(item.snippet.publishedAt).getFullYear()} views</span>
+                                <p className="text-xs text-[#aaa] font-medium mt-1 hover:text-white transition-colors" onClick={(e) => handleChannelClick(e, item.snippet.channelId)}>
+                                    {item.snippet.channelTitle}
+                                </p>
+                                <div className="flex gap-1 text-[11px] text-[#aaa] font-medium">
+                                    <span>{parseInt(selectedVideo.statistics?.viewCount).toLocaleString()} views</span>
                                     <span>•</span>
-                                    <span>2 days ago</span>
+                                    <span>{new Date(selectedVideo.snippet.publishedAt).toLocaleDateString()}</span>
                                 </div>
                             </div>
                         </div>
